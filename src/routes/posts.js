@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-// const authMiddlewares = require('../middlewares/auth')
+const authMiddlewares = require('../middlewares/auth')
 const Posts = require('../models/postsModel')
 const User = require('../models/usersModel')
 
@@ -26,7 +26,7 @@ router.get('/search/:id', async(req,res)=>{
     }
 })
 
-router.post('/', async (req, res)=>{
+router.post('/', authMiddlewares.validUserToken, async (req, res)=>{
     try{
         let post = req.body
         const newPost = await Posts.create(post)
@@ -38,7 +38,7 @@ router.post('/', async (req, res)=>{
     }
 })
 
-router.put('/edit/:id',async (req,res)=>{
+router.put('/edit/:id', authMiddlewares.validUserToken, async (req,res)=>{
     try{
         const {id} = req.params
         const post = req.body
@@ -50,7 +50,7 @@ router.put('/edit/:id',async (req,res)=>{
     }
 })
 
-router.delete('/delete/:id', async (req, res)=>{
+router.delete('/delete/:id', authMiddlewares.validUserToken, async (req, res)=>{
     try{
         const{id} = req.params
         await Posts.findByIdAndDelete(id)
